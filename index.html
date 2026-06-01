@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WEB DIR MAP v1.0</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:#0e0d0c; --surface:#1a1816; --surface-2:#221f1c; --surface-3:#2a2622;
+      --border:#2c2823; --border-strong:#3a342d; --text:#f0ede7; --muted:#8a8278;
+      --accent:#f5a524; --accent-2:#ffd166; --accent-dim:rgba(245,165,36,.18);
+      --danger:#ef4444; --success:#22c55e;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{font-family:'Space Grotesk','Segoe UI',Tahoma,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:24px;overflow:auto;-webkit-font-smoothing:antialiased}
+    body{background:radial-gradient(1200px 600px at 0% -10%,rgba(245,165,36,.06),transparent 60%),radial-gradient(800px 400px at 100% 110%,rgba(245,165,36,.04),transparent 60%),var(--bg)}
+    .container{max-width:880px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;box-shadow:0 24px 60px rgba(0,0,0,.55)}
+    .header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px}
+    h1{font-size:30px;font-weight:800;letter-spacing:-.02em}
+    h1 .accent{color:var(--accent)}
+    .subtitle{font-size:11px;color:var(--muted);letter-spacing:.22em;text-transform:uppercase;margin-bottom:22px;font-weight:600}
+    .row{display:flex;gap:12px;margin-bottom:14px;align-items:center}
+    .col-1{flex:1;min-width:0}
+    input[type=text],input[type=number],select,textarea{width:100%;padding:11px 14px;background:var(--surface-2);color:var(--text);border:1px solid var(--border);border-radius:10px;font-size:14px;font-family:inherit;transition:border-color .15s,box-shadow .15s,background .15s}
+    input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim);background:var(--surface-3)}
+    button{padding:10px 18px;border:1px solid transparent;border-radius:10px;font-size:13px;font-weight:700;letter-spacing:.04em;cursor:pointer;transition:transform .08s,background .15s,border-color .15s,color .15s;font-family:inherit}
+    button:active{transform:translateY(1px)}
+    button:disabled{opacity:.5;cursor:not-allowed}
+    .btn-primary{background:var(--accent);color:#18130a;border-color:var(--accent)}
+    .btn-primary:hover:not(:disabled){background:var(--accent-2);border-color:var(--accent-2)}
+    .btn-secondary{background:var(--surface-2);color:var(--text);border-color:var(--border)}
+    .btn-secondary:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+    .btn-danger{background:transparent;color:var(--danger);border-color:var(--danger)}
+    .btn-danger:hover:not(:disabled){background:rgba(239,68,68,.12)}
+    .btn-small{padding:7px 12px;font-size:12px}
+    .toggle-container{display:flex;align-items:center;gap:10px}
+    .toggle{position:relative;width:44px;height:24px;background:var(--border-strong);border-radius:12px;cursor:pointer;transition:background .2s;flex-shrink:0}
+    .toggle.active{background:var(--accent)}
+    .toggle-knob{position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 2px 4px rgba(0,0,0,.3)}
+    .toggle.active .toggle-knob{transform:translateX(20px)}
+    .toggle-label{font-size:13px;font-weight:500;user-select:none}
+    .conditional-input{display:none;margin-top:8px}
+    .conditional-input.show{display:block}
+    textarea{min-height:260px;max-height:540px;font-family:'JetBrains Mono','Cascadia Code','Courier New',monospace;font-size:12.5px;line-height:1.55;resize:vertical;white-space:pre}
+    .label-section{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:8px;letter-spacing:.2em}
+    .export-buttons{display:flex;gap:8px;flex-wrap:wrap}
+    .toast{position:fixed;top:20px;right:20px;background:var(--success);color:#0a1c0d;padding:12px 18px;border-radius:10px;font-size:14px;font-weight:700;box-shadow:0 6px 20px rgba(0,0,0,.4);opacity:0;transform:translateY(-10px);transition:all .25s;pointer-events:none;z-index:1000}
+    .toast.show{opacity:1;transform:translateY(0)}
+    .toast.error{background:var(--danger);color:#fff}
+    .stats{display:flex;gap:10px;align-items:center;font-size:12px;color:var(--muted);margin-bottom:8px;flex-wrap:wrap}
+    .pill{padding:4px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:999px;color:var(--text);font-weight:600;font-size:11.5px;letter-spacing:.04em}
+    .pill.success{color:var(--success);border-color:var(--success);background:rgba(34,197,94,.08)}
+    .pill.warn{color:var(--accent);border-color:var(--accent);background:rgba(245,165,36,.08)}
+    .pill.danger{color:var(--danger);border-color:var(--danger);background:rgba(239,68,68,.08)}
+    .pill.info{color:#38bdf8;border-color:#38bdf8;background:rgba(56,189,248,.08)}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px 14px}
+
+    .preset-box{background:linear-gradient(180deg,rgba(245,165,36,.06),rgba(255,255,255,.015));border:1px solid var(--border);border-radius:14px;padding:14px;margin:14px 0 18px}
+    .preset-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;margin-bottom:10px}
+    .preset-title{font-size:11px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+    .preset-desc{font-size:11.5px;color:var(--muted);margin-top:4px;line-height:1.45;max-width:560px}
+    .preset-grid{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:end}
+    .preset-preview{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+    .preset-chip{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--border);border-radius:999px;padding:4px 9px;color:var(--muted);background:var(--surface)}
+    .preset-chip.warn{color:var(--accent);border-color:var(--accent);background:rgba(245,165,36,.08)}
+    .preset-chip.info{color:#38bdf8;border-color:#38bdf8;background:rgba(56,189,248,.08)}
+    .preset-chip.success{color:var(--success);border-color:var(--success);background:rgba(34,197,94,.08)}
+    .preset-merge{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted);white-space:nowrap;margin-top:8px}
+    .preset-merge input{accent-color:var(--accent)}
+    @media (max-width:720px){.preset-grid{grid-template-columns:1fr}.preset-grid button{width:100%}}
+
+    .report-tools{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:12px;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:12px}
+    .report-tools .grow{flex:1;min-width:240px}
+    .mini-label{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.16em;margin-bottom:5px}
+    .select-checklist{max-height:150px;overflow:auto;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:8px;margin-top:8px}
+    .check-row{display:flex;gap:8px;align-items:flex-start;padding:6px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text)}
+    .check-row:hover{background:var(--surface-3)}
+    .check-row input{margin-top:2px;accent-color:var(--accent)}
+    .export-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+    @media (max-width:640px){.export-options{grid-template-columns:1fr}}
+    @media (max-width:640px){.grid-2{grid-template-columns:1fr}.row{flex-wrap:wrap}}
+    .hint{font-size:11px;color:var(--muted);margin-top:4px}
+    .mode-box{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:14px}
+    .mode-title{font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+    .mode-state{font-size:12px;color:var(--accent);font-weight:800;letter-spacing:.08em}
+    #multiSitesWrap{display:none;margin-bottom:14px}
+    #multiSitesWrap.show{display:block}
+    #multiSitesInput{min-height:96px;max-height:220px}
+    .tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:14px}
+    .tab{background:transparent;border:none;color:var(--muted);padding:10px 16px;font-size:11.5px;letter-spacing:.18em;font-weight:700;cursor:pointer;border-bottom:2px solid transparent;border-radius:0}
+    .tab:hover{color:var(--text)}
+    .tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+    .panel{background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:16px}
+    .panel-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+    .list{display:flex;flex-direction:column;gap:8px;max-height:380px;overflow-y:auto;margin-top:10px}
+    .list-item{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;gap:12px}
+    .list-item:hover{border-color:var(--border-strong)}
+    .list-item.status-done{border-left:3px solid var(--success)}
+    .list-item.status-error{border-left:3px solid var(--danger)}
+    .list-item.sensitive{border-left:3px solid var(--danger)}
+    .list-main{flex:1;min-width:0}
+    .list-url{font-family:'JetBrains Mono',monospace;font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .list-url.danger{color:var(--danger)}
+    .list-meta{display:flex;gap:10px;font-size:11px;color:var(--muted);margin-top:4px;flex-wrap:wrap}
+    .list-meta a{color:var(--accent);text-decoration:none;word-break:break-all}
+    .list-meta a:hover{text-decoration:underline}
+    .warn{color:var(--accent)}
+    .danger{color:var(--danger)}
+    .success{color:var(--success)}
+    .list-meta .warn{color:var(--accent)}
+    .list-meta .danger{color:var(--danger)}
+    .list-meta .success{color:var(--success)}
+    .list-actions{display:flex;gap:6px;flex-shrink:0}
+    .status-badge{text-transform:uppercase;font-weight:700;letter-spacing:.08em;font-size:10px;padding:2px 8px;border-radius:999px;background:var(--surface-2);border:1px solid var(--border)}
+    .status-badge.pending{color:var(--muted)}
+    .status-badge.done{color:var(--success);border-color:var(--success)}
+    .status-badge.running{color:var(--accent);border-color:var(--accent)}
+    .status-badge.error{color:var(--danger);border-color:var(--danger)}
+    .scan-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+    .scan-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+    .scan-card .num{font-size:20px;font-weight:800;letter-spacing:-.03em}
+    .scan-card .txt{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.16em;margin-top:2px}
+    .scan-card.success .num{color:var(--success)}
+    .scan-card.danger .num{color:var(--danger)}
+    .scan-card.warn .num{color:var(--accent)}
+    .queue-toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:10px 0 8px}
+    .filter-bar{display:flex;gap:6px;flex-wrap:wrap}
+    .filter-chip{padding:7px 10px;border-radius:999px;background:var(--surface);border:1px solid var(--border);color:var(--muted);font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+    .filter-chip.active,.filter-chip:hover{border-color:var(--accent);color:var(--accent)}
+    .queue-add{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:12px}
+    .queue-add summary{cursor:pointer;color:var(--accent);font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase}
+    .job-table-wrap{max-height:340px;overflow:auto;border:1px solid var(--border);border-radius:10px;background:var(--surface)}
+    .job-table{width:100%;border-collapse:collapse;font-size:11.5px}
+    .job-table th{position:sticky;top:0;background:var(--surface-2);color:var(--muted);text-align:left;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;padding:9px 8px;border-bottom:1px solid var(--border);z-index:1}
+    .job-table td{padding:9px 8px;border-bottom:1px solid var(--border);vertical-align:middle}
+    .job-table tr:last-child td{border-bottom:none}
+    .job-table tr:hover td{background:rgba(255,255,255,.025)}
+    .job-url{font-family:'JetBrains Mono',monospace;max-width:360px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .job-batch{font-size:10px;color:var(--muted);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .job-actions{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
+    .job-check{accent-color:var(--accent)}
+    @media (max-width:760px){.scan-summary{grid-template-columns:1fr 1fr}.job-table th:nth-child(5),.job-table td:nth-child(5){display:none}}
+    .empty{text-align:center;padding:28px 14px;color:var(--muted);font-size:13px;border:1px dashed var(--border);border-radius:8px}
+    .footer{margin-top:26px;text-align:center;font-size:11px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}
+    ::-webkit-scrollbar{width:8px;height:8px}
+    ::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:4px}
+    ::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+    ::-webkit-scrollbar-track{background:transparent}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>WEB DIR <span class="accent">MAP</span></h1>
+      <div class="subtitle">v1.0</div>
+    </div>
+    <div class="subtitle">Mapeador recursivo de diretórios web</div>
+
+    <div class="mode-box">
+      <div>
+        <div class="mode-title">Modo de pesquisa</div>
+        <div class="hint">Desligado: um site só. Ligado: vários sites, um por linha.</div>
+      </div>
+      <div class="toggle-container">
+        <div class="toggle" id="toggleMultiSites"><div class="toggle-knob"></div></div>
+        <span class="toggle-label" id="multiSitesLabel">UM SITE</span>
+      </div>
+    </div>
+
+    <div class="row" id="singleUrlRow">
+      <div class="col-1" id="singleUrlCol">
+        <input type="text" id="urlInput" value="https://gbm.org.br/wp-includes/rest-api/" placeholder="https://exemplo.com/path/" />
+      </div>
+      <div style="flex:0 0 140px;" id="qsCol">
+        <input type="text" id="qsInput" value="SA" placeholder="query (ex: SA)" title="Query string preservada" />
+      </div>
+      <div style="flex:0 0 auto;">
+        <button class="btn-primary" id="mapBtn">MAPEAR DIR</button>
+      </div>
+      <div style="flex:0 0 auto;display:none;" id="cancelWrap">
+        <button class="btn-danger" id="cancelBtn">CANCELAR</button>
+      </div>
+    </div>
+
+    <div id="multiSitesWrap">
+      <textarea id="multiSitesInput" placeholder="Cole várias URLs aqui, uma por linha. Ex:
+https://site1.com/path/
+https://site2.com/outro-path/"></textarea>
+      <div class="hint">O app usa as mesmas opções abaixo para todos os sites. É tipo colocar a matilha para farejar várias trilhas, sem bagunçar o faro.</div>
+    </div>
+
+
+    <div class="preset-box">
+      <div class="preset-head">
+        <div>
+          <div class="preset-title">Perfis de busca inteligente</div>
+          <div class="preset-desc">Escolha um perfil e o app preenche automaticamente atenção especial, profundidade e opções úteis. Você ainda pode editar tudo na mão depois — o robô sugere, você manda.</div>
+        </div>
+        <label class="preset-merge" title="Quando ativo, soma os termos do perfil com o que já estiver nos campos.">
+          <input type="checkbox" id="presetMerge" /> Mesclar com atual
+        </label>
+      </div>
+      <div class="preset-grid">
+        <div>
+          <div class="mini-label">Perfil</div>
+          <select id="searchPreset">
+            <option value="custom">Personalizado / manual</option>
+            <option value="wordpress">WordPress</option>
+            <option value="storage">Storage público</option>
+            <option value="backups">Backups</option>
+            <option value="database">Banco de dados</option>
+            <option value="credentials">Credenciais / config</option>
+            <option value="brdocs">Brasil / documentos</option>
+            <option value="light">Modo leve</option>
+            <option value="aggressive">Modo agressivo</option>
+          </select>
+        </div>
+        <button class="btn-primary" id="applyPresetBtn" type="button">APLICAR PERFIL</button>
+        <button class="btn-secondary" id="clearAttentionBtn" type="button">LIMPAR ATENÇÃO</button>
+      </div>
+      <div class="preset-preview" id="presetPreview"></div>
+    </div>
+
+    <div class="grid-2">
+      <div>
+        <div class="toggle-container">
+          <div class="toggle" id="toggleExtensions"><div class="toggle-knob"></div></div>
+          <span class="toggle-label">Ocultar Extensão(ões)</span>
+        </div>
+        <div class="conditional-input" id="extensionsInput">
+          <input type="text" id="hiddenExtensions" value=".jpg, .png, .gif, .ico, .css, .js, .woff, .woff2" placeholder="Ex: .jpg, .png" />
+        </div>
+      </div>
+      <div>
+        <div class="toggle-container">
+          <div class="toggle" id="toggleHideFiles"><div class="toggle-knob"></div></div>
+          <span class="toggle-label">Ocultar Todos os Arquivos</span>
+        </div>
+      </div>
+      <div>
+        <div class="toggle-container">
+          <div class="toggle active" id="toggleRecursion"><div class="toggle-knob"></div></div>
+          <span class="toggle-label">Controlar Recursividade</span>
+        </div>
+        <div class="conditional-input show" id="recursionInput">
+          <input type="number" id="maxDepth" value="3" min="1" placeholder="Nível máx" />
+        </div>
+      </div>
+      <div>
+        <div class="toggle-container">
+          <div class="toggle active" id="toggleSensitive"><div class="toggle-knob"></div></div>
+          <span class="toggle-label">Detectar Arquivos Sensíveis</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top:18px;">
+      <div>
+        <div class="toggle-container">
+          <div class="toggle" id="toggleSpecialFiles"><div class="toggle-knob"></div></div>
+          <span class="toggle-label">Dar Atenção Especial — Arquivos/Extensões</span>
+        </div>
+        <div class="conditional-input" id="specialFilesInput">
+          <textarea id="specialFiles" placeholder="Special attention files: .env, .sql, backup.zip, *.bak&#10;Separe por vírgula ou linha" style="min-height:72px;max-height:140px;"></textarea>
+        </div>
+      </div>
+      <div>
+        <div class="toggle-container">
+          <div class="toggle" id="toggleSpecialDirs"><div class="toggle-knob"></div></div>
+          <span class="toggle-label">Dar Atenção Especial — Dirs</span>
+        </div>
+        <div class="conditional-input" id="specialDirsInput">
+          <textarea id="specialDirs" placeholder="Special attention dirs: backup, admin, storage, database&#10;Separe por vírgula ou linha" style="min-height:72px;max-height:140px;"></textarea>
+        </div>
+      </div>
+      <div>
+        <div class="toggle-container">
+          <div class="toggle" id="toggleSpecialWords"><div class="toggle-knob"></div></div>
+          <span class="toggle-label">Dar Atenção Especial — Palavras/Nomes</span>
+        </div>
+        <div class="conditional-input" id="specialWordsInput">
+          <textarea id="specialWords" placeholder="Special attention words: cliente, contrato, cpf, token&#10;Separe por vírgula ou linha" style="min-height:72px;max-height:140px;"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:16px;">
+      <div class="col-1">
+        <select id="formatType">
+          <option value="uml">UML / TREE</option>
+          <option value="json">JSON</option>
+          <option value="diagram">DIAGRAMA</option>
+        </select>
+      </div>
+      <div style="flex:0 0 auto;">
+        <input type="number" id="maxItems" min="100" step="1000" value="100000" title="Limite de itens" style="width:140px" />
+        <div class="hint">Limite de itens</div>
+      </div>
+    </div>
+
+    <div class="label-section" style="margin-top:14px;">RESULTADO</div>
+    <div class="stats" id="stats" style="display:none;">
+      <span class="pill" id="statItems">0 itens</span>
+      <span class="pill success" id="statNormal">0 NORMAL</span>
+      <span class="pill" id="statTime">0 ms</span>
+      <span class="pill warn" id="statTrunc" style="display:none;">TRUNCADO</span>
+      <span class="pill danger" id="statSensitive" style="display:none;">0 SENSÍVEL</span>
+      <span class="pill warn" id="statSpecial" style="display:none;">0 ATENÇÃO</span>
+      <span class="pill info" id="statSpecialFiles" style="display:none;">0 ARQ/EXT</span>
+      <span class="pill info" id="statSpecialDirs" style="display:none;">0 DIRS</span>
+      <span class="pill info" id="statSpecialWords" style="display:none;">0 PALAVRAS</span>
+    </div>
+
+    <div class="report-tools" id="reportTools" style="display:none;">
+      <div class="grow">
+        <div class="mini-label">Relatórios separados</div>
+        <select id="reportSelect"></select>
+      </div>
+      <div style="min-width:170px;">
+        <div class="mini-label">Exibir</div>
+        <select id="displayMode">
+          <option value="map">Só mapa</option>
+          <option value="stats">Só estatísticas</option>
+          <option value="both">Estatísticas + mapa</option>
+        </select>
+      </div>
+      <button class="btn-secondary btn-small" id="openReportBtn">EXIBIR</button>
+    </div>
+
+    <textarea id="output" readonly placeholder="O mapa aparecerá aqui..."></textarea>
+
+    <div style="margin-top:14px;">
+      <div class="label-section">EXPORTAR COMO</div>
+      <div class="export-options" id="exportOptions" style="display:none;">
+        <div>
+          <div class="mini-label">Escopo</div>
+          <select id="exportScope">
+            <option value="global">Global / todos os dirs pesquisados</option>
+            <option value="selected">Selecionados por checkbox</option>
+            <option value="one">Somente o relatório aberto</option>
+          </select>
+        </div>
+        <div>
+          <div class="mini-label">Conteúdo</div>
+          <select id="exportContent">
+            <option value="stats">Só estatísticas</option>
+            <option value="both">Estatísticas + mapa</option>
+            <option value="map">Só mapa</option>
+          </select>
+        </div>
+      </div>
+      <div class="select-checklist" id="reportChecklist" style="display:none;"></div>
+      <div class="export-buttons">
+        <button class="btn-secondary btn-small" id="exportMd">.MD</button>
+        <button class="btn-secondary btn-small" id="exportJson">.JSON</button>
+        <button class="btn-secondary btn-small" id="exportTxt">.TXT</button>
+        <button class="btn-primary btn-small" id="copyBtn">COPIAR</button>
+      </div>
+    </div>
+
+    <div class="tabs" style="margin-top:24px;">
+      <button class="tab active" data-tab="queue" id="tabQueue">CENTRAL (<span id="queuePendingCount">0</span>)</button>
+      <button class="tab" data-tab="history" id="tabHistory">HISTÓRICO (<span id="historyCount">0</span>)</button>
+      <button class="tab" data-tab="sensitive" id="tabSensitive">SENSÍVEIS (<span id="sensitiveCount">0</span>)</button>
+      <button class="tab" data-tab="archive" id="tabArchive">ARQUIVO MORTO (<span id="archiveCount">0</span>)</button>
+    </div>
+
+    <div class="panel" id="panelQueue">
+      <div class="panel-header">
+        <div>
+          <div class="label-section" style="margin:0;">CENTRAL DA VARREDURA</div>
+          <div class="hint">Resumo, fila e ações em lote. Sem repetir relatório que nem papagaio ansioso.</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn-secondary btn-small" id="addCurrentBtn">+ ATUAL</button>
+          <button class="btn-primary btn-small" id="runAllBtn">RODAR PENDENTES</button>
+          <button class="btn-secondary btn-small" id="rerunErrorsBtn">REEXECUTAR ERROS</button>
+          <button class="btn-secondary btn-small" id="archiveSelectedBtn">ARQUIVAR SELECIONADOS</button>
+          <button class="btn-secondary btn-small" id="archiveSelectedBatchesBtn">ARQUIVAR LOTE(S)</button>
+          <button class="btn-secondary btn-small" id="clearDoneBtn">ARQUIVAR CONCLUÍDOS</button>
+          <button class="btn-danger btn-small" id="clearQueueBtn">CLEAR → ARQUIVO MORTO</button>
+        </div>
+      </div>
+
+      <div class="scan-summary" id="queueSummary"></div>
+
+      <details class="queue-add">
+        <summary>Adicionar lote manual</summary>
+        <textarea id="bulkUrls" placeholder="Cole várias URLs (uma por linha)" style="min-height:80px;margin-top:10px;"></textarea>
+        <div style="margin-top:8px;">
+          <button class="btn-secondary btn-small" id="addBulkBtn">+ ADICIONAR LOTE</button>
+        </div>
+      </details>
+
+      <div class="queue-toolbar">
+        <div class="filter-bar" id="queueFilters">
+          <button class="filter-chip active" data-qfilter="all">Todos</button>
+          <button class="filter-chip" data-qfilter="pending">Pendentes</button>
+          <button class="filter-chip" data-qfilter="done">Concluídos</button>
+          <button class="filter-chip" data-qfilter="error">Erros</button>
+          <button class="filter-chip" data-qfilter="sensitive">Sensíveis</button>
+          <button class="filter-chip" data-qfilter="special">Atenção</button>
+          <button class="filter-chip" data-qfilter="empty">Vazios</button>
+          <button class="filter-chip" data-qfilter="largest">Maiores</button>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn-secondary btn-small" id="markQueueForExportBtn">MARCAR SELECIONADOS P/ EXPORTAR</button>
+          <button class="btn-danger btn-small" id="deleteSelectedBtn">APAGAR SEL.</button>
+        </div>
+      </div>
+
+      <div class="job-table-wrap" id="queueList"></div>
+    </div>
+
+    <div class="panel" id="panelHistory" style="display:none;">
+      <div class="panel-header">
+        <div class="label-section" style="margin:0;">HISTÓRICO</div>
+        <button class="btn-danger btn-small" id="clearHistoryBtn">LIMPAR TUDO</button>
+      </div>
+      <div class="list" id="historyList"></div>
+    </div>
+
+    <div class="panel" id="panelSensitive" style="display:none;">
+      <div class="panel-header">
+        <div class="label-section" style="margin:0;">ARQUIVOS SENSÍVEIS DETECTADOS</div>
+      </div>
+      <div class="list" id="sensitiveList"></div>
+    </div>
+
+    <div class="panel" id="panelArchive" style="display:none;">
+      <div class="panel-header">
+        <div>
+          <div class="label-section" style="margin:0;">ARQUIVO MORTO</div>
+          <div class="hint">Tudo que você tirou da central sem jogar no abismo. Dá para restaurar ou apagar para sempre.</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn-secondary btn-small" id="restoreArchiveSelectedBtn">RESTAURAR SELECIONADOS</button>
+          <button class="btn-secondary btn-small" id="restoreArchiveBatchesBtn">RESTAURAR LOTE(S)</button>
+          <button class="btn-danger btn-small" id="deleteArchiveSelectedBtn">APAGAR SELECIONADOS</button>
+          <button class="btn-danger btn-small" id="emptyArchiveBtn">ESVAZIAR ARQUIVO</button>
+        </div>
+      </div>
+      <div class="job-table-wrap" id="archiveList"></div>
+    </div>
+
+    <div class="footer">DIR MAP v0.2 → Web Edition</div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const { ipcRenderer } = require('electron');
+
+    let queue = JSON.parse(localStorage.getItem('queue') || '[]');
+    let archive = JSON.parse(localStorage.getItem('archive') || '[]');
+    let history = JSON.parse(localStorage.getItem('history') || '[]');
+    let sensitiveHits = [];
+    let currentReportId = null;
+    let queueFilter = 'all';
+    let mapping = false;
+
+    function uuid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+    function saveQueue() { localStorage.setItem('queue', JSON.stringify(queue)); }
+    function saveArchive() { localStorage.setItem('archive', JSON.stringify(archive)); }
+    function saveHistory() { localStorage.setItem('history', JSON.stringify(history.slice(0, 50))); }
+    function $(id) { return document.getElementById(id); }
+    function escapeHtml(v) { return String(v ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+    function shortUrl(url) { return String(url || '').replace(/^https?:\/\//, '').slice(0, 95); }
+    function specialCountsFromHits(hits) {
+      const c = { file: 0, extension: 0, dir: 0, word: 0 };
+      (hits || []).forEach(x => { if (x && c[x.kind] !== undefined) c[x.kind] += 1; });
+      return c;
+    }
+    function specialBreakdownFromHits(hits) {
+      const b = { file: {}, extension: {}, dir: {}, word: {} };
+      (hits || []).forEach(x => {
+        const kind = x?.kind;
+        const reason = String(x?.reason || x?.name || '').trim().toLowerCase();
+        if (kind && b[kind] !== undefined && reason) b[kind][reason] = (b[kind][reason] || 0) + 1;
+      });
+      return b;
+    }
+    function mergedSpecialCounts(h) {
+      return h?.special_counts || h?.specialCounts || specialCountsFromHits(h?.special_hits || []);
+    }
+    function mergedSpecialBreakdown(h) {
+      return h?.special_breakdown || h?.specialBreakdown || specialBreakdownFromHits(h?.special_hits || []);
+    }
+    function addBreakdown(target, source) {
+      ['file','extension','dir','word'].forEach(k => {
+        Object.entries(source?.[k] || {}).forEach(([name,count]) => {
+          const key = String(name || '').trim().toLowerCase();
+          if (key) target[k][key] = (target[k][key] || 0) + (count || 0);
+        });
+      });
+      return target;
+    }
+    function sortBreakdownMap(map) {
+      return Object.entries(map || {}).sort((a,b) => (b[1] - a[1]) || a[0].localeCompare(b[0]));
+    }
+    function breakdownLabel(map, limit = 4) {
+      const entries = sortBreakdownMap(map);
+      if (!entries.length) return '';
+      const text = entries.slice(0, limit).map(([name,count]) => `${name}: ${count}`).join(', ');
+      return ` (${text}${entries.length > limit ? ', ...' : ''})`;
+    }
+    function groupedFileBreakdown(b) {
+      const out = {};
+      Object.entries(b?.file || {}).forEach(([k,v]) => out[k] = (out[k] || 0) + v);
+      Object.entries(b?.extension || {}).forEach(([k,v]) => out[k] = (out[k] || 0) + v);
+      return out;
+    }
+
+    const SEARCH_PRESETS = {
+      custom: { name: 'Personalizado / manual', desc: 'Nada automático. Você pilota tudo.', files: [], dirs: [], words: [], depth: null, maxItems: null, hideFiles: null, detectSensitive: null, hideExtensions: null },
+      wordpress: { name: 'WordPress', desc: 'Foco em wp-content, uploads, plugins, temas, backups e configs típicas.', files: ['.env','.sql','.bak','.old','.zip','.tar','.gz','wp-config.php','debug.log','error_log'], dirs: ['wp-content','uploads','plugins','themes','upgrade','backup','backups','cache','logs'], words: ['wp-config','database','db_password','admin','backup','dump','debug','credential','token'], depth: 4, maxItems: 100000, hideFiles: false, detectSensitive: true, hideExtensions: '.jpg, .png, .gif, .ico, .css, .js, .woff, .woff2' },
+      storage: { name: 'Storage público', desc: 'Fareja uploads, arquivos órfãos, mídia demais e documentos soltos.', files: ['.pdf','.doc','.docx','.xls','.xlsx','.csv','.zip','.rar','.7z','.bak','.sql','.env'], dirs: ['storage','uploads','upload','files','file','media','documents','docs','public','assets','anexos'], words: ['cliente','clientes','contrato','contratos','documento','documentos','cpf','rg','financeiro','recibo','nota','boleto'], depth: 4, maxItems: 100000, hideFiles: false, detectSensitive: true, hideExtensions: '.jpg, .png, .gif, .ico, .css, .js, .woff, .woff2' },
+      backups: { name: 'Backups', desc: 'Caça bkp, dumps, olds e arquivos compactados que ninguém deveria largar no sol.', files: ['.zip','.rar','.7z','.tar','.gz','.tgz','.bak','.old','.backup','.sql','.dump','.db'], dirs: ['backup','backups','bkp','bkps','dump','dumps','old','archive','archives','export','exports'], words: ['backup','bkp','dump','database','db','mysql','postgres','export','old','copia','copy'], depth: 5, maxItems: 150000, hideFiles: false, detectSensitive: true, hideExtensions: '.jpg, .png, .gif, .ico, .css, .js, .woff, .woff2' },
+      database: { name: 'Banco de dados', desc: 'Prioriza dumps, bancos locais, exports e nomes ligados a tabelas/dados.', files: ['.sql','.dump','.db','.sqlite','.sqlite3','.mdb','.accdb','.csv','.tsv','.json','.xml'], dirs: ['database','databases','db','mysql','postgres','postgresql','sql','dump','dumps','exports','data','dados'], words: ['database','senha','password','usuario','users','clientes','cpf','token','dump','schema','backup'], depth: 5, maxItems: 150000, hideFiles: false, detectSensitive: true, hideExtensions: '.jpg, .png, .gif, .ico, .css, .js, .woff, .woff2' },
+      credentials: { name: 'Credenciais / config', desc: 'Olho clínico para configs, secrets, tokens, envs e logs perigosos.', files: ['.env','.ini','.conf','.config','.yml','.yaml','.json','.pem','.key','.crt','.p12','.log','credentials.json','secrets.json','config.php'], dirs: ['config','configs','configuration','env','secrets','secret','keys','certs','private','logs','admin'], words: ['password','passwd','senha','secret','token','apikey','api_key','client_secret','access_key','private_key','credential','auth'], depth: 5, maxItems: 120000, hideFiles: false, detectSensitive: true, hideExtensions: '.jpg, .png, .gif, .ico, .css, .js, .woff, .woff2' },
+      brdocs: { name: 'Brasil / documentos', desc: 'Perfil para nomes brasileiros de cadastro, contratos, financeiro e documentos.', files: ['.pdf','.doc','.docx','.xls','.xlsx','.csv','.zip','.rar','.sql','.bak'], dirs: ['clientes','cadastros','contratos','financeiro','documentos','docs','uploads','storage','boletos','notas','relatorios'], words: ['cpf','rg','cnpj','cliente','clientes','contrato','contratos','cadastro','cadastros','boleto','financeira','empréstimo','emprestimo','promotora','crédito','credito'], depth: 4, maxItems: 120000, hideFiles: false, detectSensitive: true, hideExtensions: '.jpg, .png, .gif, .ico, .css, .js, .woff, .woff2' },
+      light: { name: 'Modo leve', desc: 'Varredura mais comportada para testar alvo sem levantar poeira.', files: ['.env','.sql','.bak','.zip'], dirs: ['backup','storage','uploads','admin'], words: ['senha','password','token','cliente'], depth: 2, maxItems: 30000, hideFiles: false, detectSensitive: true, hideExtensions: '.jpg, .png, .gif, .ico, .css, .js, .woff, .woff2, .svg, .map' },
+      aggressive: { name: 'Modo agressivo', desc: 'Mais profundidade, mais limite e listas amplas. É o modo trator — use com cabeça.', files: ['.env','.sql','.dump','.db','.sqlite','.bak','.old','.backup','.zip','.rar','.7z','.tar','.gz','.log','.json','.xml','.yml','.yaml','.ini','.conf','.pem','.key','.p12'], dirs: ['backup','backups','bkp','dump','dumps','database','db','storage','uploads','files','docs','documents','admin','private','config','configs','logs','old','archive','exports','data','dados'], words: ['senha','password','passwd','secret','token','apikey','api_key','cpf','rg','cnpj','cliente','clientes','contrato','database','dump','backup','credential','private_key','access_key'], depth: 6, maxItems: 250000, hideFiles: false, detectSensitive: true, hideExtensions: '.jpg, .png, .gif, .ico, .css, .js, .woff, .woff2' }
+    };
+
+    function splitTerms(v) {
+      if (Array.isArray(v)) return v.map(x => String(x).trim()).filter(Boolean);
+      return String(v || '').split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
+    }
+    function mergeTerms(current, incoming) {
+      const seen = new Set();
+      return [...splitTerms(current), ...splitTerms(incoming)].filter(term => {
+        const key = term.toLowerCase();
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      }).join(', ');
+    }
+    function setToggleActive(id, active, inputId) {
+      if (active === null || active === undefined) return;
+      $(id).classList.toggle('active', !!active);
+      if (inputId) $(inputId).classList.toggle('show', !!active);
+    }
+    function applyPreset() {
+      const key = $('searchPreset').value;
+      const p = SEARCH_PRESETS[key];
+      if (!p || key === 'custom') { showToast('Perfil manual: nada foi alterado.'); return; }
+      const merge = $('presetMerge').checked;
+      setToggleActive('toggleSpecialFiles', p.files.length > 0, 'specialFilesInput');
+      setToggleActive('toggleSpecialDirs', p.dirs.length > 0, 'specialDirsInput');
+      setToggleActive('toggleSpecialWords', p.words.length > 0, 'specialWordsInput');
+      $('specialFiles').value = merge ? mergeTerms($('specialFiles').value, p.files) : p.files.join(', ');
+      $('specialDirs').value = merge ? mergeTerms($('specialDirs').value, p.dirs) : p.dirs.join(', ');
+      $('specialWords').value = merge ? mergeTerms($('specialWords').value, p.words) : p.words.join(', ');
+      if (p.depth !== null) { setToggleActive('toggleRecursion', true, 'recursionInput'); $('maxDepth').value = p.depth; }
+      if (p.maxItems !== null) $('maxItems').value = p.maxItems;
+      if (p.hideFiles !== null) setToggleActive('toggleHideFiles', p.hideFiles);
+      if (p.detectSensitive !== null) setToggleActive('toggleSensitive', p.detectSensitive);
+      if (p.hideExtensions !== null) { setToggleActive('toggleExtensions', true, 'extensionsInput'); $('hiddenExtensions').value = p.hideExtensions; }
+      updatePresetPreview();
+      showToast(`Perfil aplicado: ${p.name}`);
+    }
+    function clearAttentionFields() {
+      ['specialFiles','specialDirs','specialWords'].forEach(id => $(id).value = '');
+      setToggleActive('toggleSpecialFiles', false, 'specialFilesInput');
+      setToggleActive('toggleSpecialDirs', false, 'specialDirsInput');
+      setToggleActive('toggleSpecialWords', false, 'specialWordsInput');
+      $('searchPreset').value = 'custom';
+      updatePresetPreview();
+      showToast('Atenção especial limpa.');
+    }
+    function updatePresetPreview() {
+      const key = $('searchPreset')?.value || 'custom';
+      const p = SEARCH_PRESETS[key] || SEARCH_PRESETS.custom;
+      const chips = [];
+      if (p.depth !== null) chips.push(`<span class="preset-chip warn">depth ${p.depth}</span>`);
+      if (p.maxItems !== null) chips.push(`<span class="preset-chip">limite ${p.maxItems}</span>`);
+      if (p.files?.length) chips.push(`<span class="preset-chip info">${p.files.length} arq/ext</span>`);
+      if (p.dirs?.length) chips.push(`<span class="preset-chip success">${p.dirs.length} dirs</span>`);
+      if (p.words?.length) chips.push(`<span class="preset-chip warn">${p.words.length} palavras</span>`);
+      if (p.detectSensitive) chips.push(`<span class="preset-chip warn">sensíveis ON</span>`);
+      chips.push(`<span class="preset-chip">${escapeHtml(p.desc)}</span>`);
+      $('presetPreview').innerHTML = chips.join('');
+    }
+
+    function attentionTogglesState() {
+      return {
+        files: $('toggleSpecialFiles').classList.contains('active'),
+        dirs: $('toggleSpecialDirs').classList.contains('active'),
+        words: $('toggleSpecialWords').classList.contains('active'),
+        sensitive: $('toggleSensitive').classList.contains('active'),
+      };
+    }
+    function setStats(items, elapsed, truncated, sensitiveCount, specialCount, specialCounts, specialBreakdown) {
+      const toggles = attentionTogglesState();
+      const sc = specialCounts || { file: 0, extension: 0, dir: 0, word: 0 };
+      const filesTotal = (sc.file || 0) + (sc.extension || 0);
+      const dirsTotal = sc.dir || 0;
+      const wordsTotal = sc.word || 0;
+      const sb = specialBreakdown || { file: {}, extension: {}, dir: {}, word: {} };
+      const normalCount = Math.max((items || 0) - (sensitiveCount || 0) - (specialCount || 0), 0);
+      $('stats').style.display = 'flex';
+      $('statItems').textContent = `${items || 0} itens`;
+      $('statNormal').textContent = `${normalCount} NORMAL`;
+      $('statTime').textContent = `${elapsed || 0} ms`;
+      $('statTrunc').style.display = truncated ? 'inline-block' : 'none';
+      $('statSensitive').style.display = (toggles.sensitive || sensitiveCount > 0) ? 'inline-block' : 'none';
+      $('statSensitive').textContent = `${sensitiveCount || 0} SENSÍVEL`;
+      $('statSpecial').style.display = (toggles.files || toggles.dirs || toggles.words || specialCount > 0) ? 'inline-block' : 'none';
+      $('statSpecial').textContent = `${specialCount || 0} ATENÇÃO`;
+      $('statSpecialFiles').style.display = (toggles.files || filesTotal > 0) ? 'inline-block' : 'none';
+      $('statSpecialFiles').textContent = `${filesTotal} ARQ/EXT${breakdownLabel(groupedFileBreakdown(sb))}`;
+      $('statSpecialDirs').style.display = (toggles.dirs || dirsTotal > 0) ? 'inline-block' : 'none';
+      $('statSpecialDirs').textContent = `${dirsTotal} DIRS${breakdownLabel(sb.dir)}`;
+      $('statSpecialWords').style.display = (toggles.words || wordsTotal > 0) ? 'inline-block' : 'none';
+      $('statSpecialWords').textContent = `${wordsTotal} PALAVRAS${breakdownLabel(sb.word)}`;
+    }
+    function reportTitle(h, i) { return `${i + 1}. ${shortUrl(h.url)} — ${h.items || 0} itens`; }
+    function selectedReportIds() { return Array.from(document.querySelectorAll('.report-check:checked')).map(x => x.value); }
+    function reportsByScope(scope) {
+      if (scope === 'global') return history.slice();
+      if (scope === 'selected') {
+        const ids = selectedReportIds();
+        return ids.length ? history.filter(h => ids.includes(h.id)) : (currentReportId ? history.filter(h => h.id === currentReportId) : []);
+      }
+      return currentReportId ? history.filter(h => h.id === currentReportId) : (history[0] ? [history[0]] : []);
+    }
+    function statsTextForReports(reports, title='RELATÓRIO ESTATÍSTICO') {
+      const totalItems = reports.reduce((a,h)=>a+(h.items||0),0);
+      const totalMs = reports.reduce((a,h)=>a+(h.elapsed_ms||0),0);
+      const totalSensitive = reports.reduce((a,h)=>a+(h.sensitive_count||0),0);
+      const totalSpecial = reports.reduce((a,h)=>a+(h.special_count||0),0);
+      const totalSpecialCounts = reports.reduce((a,h)=>{
+        const c = mergedSpecialCounts(h);
+        a.file += c.file || 0; a.extension += c.extension || 0; a.dir += c.dir || 0; a.word += c.word || 0;
+        return a;
+      }, { file: 0, extension: 0, dir: 0, word: 0 });
+      const totalBreakdown = reports.reduce((a,h)=>addBreakdown(a, mergedSpecialBreakdown(h)), { file: {}, extension: {}, dir: {}, word: {} });
+      const totalFileBreakdown = groupedFileBreakdown(totalBreakdown);
+      const truncated = reports.filter(h=>h.truncated).length;
+      const normal = Math.max(totalItems - totalSensitive - totalSpecial, 0);
+      const lines = [
+        title,
+        '='.repeat(title.length),
+        `Jobs: ${reports.length}`,
+        `Itens totais: ${totalItems}`,
+        `Itens normais: ${normal}`,
+        `Tempo total: ${totalMs} ms`,
+        `Arquivos sensíveis: ${totalSensitive}`,
+        `Itens com atenção especial: ${totalSpecial}`,
+        `  - Arquivos/extensões especiais: ${totalSpecialCounts.file + totalSpecialCounts.extension}${breakdownLabel(totalFileBreakdown, 20)}`,
+        `  - Diretórios especiais: ${totalSpecialCounts.dir}${breakdownLabel(totalBreakdown.dir, 20)}`,
+        `  - Palavras/nomes especiais: ${totalSpecialCounts.word}${breakdownLabel(totalBreakdown.word, 20)}`,
+        `Relatórios truncados: ${truncated}`,
+        '',
+        'POR DIR / SITE',
+        '--------------'
+      ];
+      reports.forEach((h,i)=>{
+        const c = mergedSpecialCounts(h);
+        const b = mergedSpecialBreakdown(h);
+        const normalLocal = Math.max((h.items||0) - (h.sensitive_count||0) - (h.special_count||0), 0);
+        lines.push(`${i+1}. ${h.url}`);
+        lines.push(`   Data: ${new Date(h.created_at).toLocaleString()}`);
+        lines.push(`   Itens: ${h.items||0} | Normais: ${normalLocal} | Tempo: ${h.elapsed_ms||0} ms | Sensíveis: ${h.sensitive_count||0} | Atenção: ${h.special_count||0} | Truncado: ${h.truncated ? 'sim' : 'não'}`);
+        lines.push(`   Atenção por tipo: arq/ext=${(c.file||0)+(c.extension||0)}${breakdownLabel(groupedFileBreakdown(b), 20)} | dirs=${c.dir||0}${breakdownLabel(b.dir, 20)} | palavras=${c.word||0}${breakdownLabel(b.word, 20)}`);
+        if ((h.sensitive_hits||[]).length) {
+          lines.push('   Sensíveis detectados:');
+          (h.sensitive_hits||[]).forEach(s => lines.push(`   - ${s.name || ''} | ${s.url || ''}`));
+        }
+        if ((h.special_hits||[]).length) {
+          lines.push('   Atenção especial:');
+          (h.special_hits||[]).forEach(s => lines.push(`   - ${s.kind || ''}: ${s.name || ''} | ${s.reason || ''} | ${s.url || ''}`));
+        }
+        lines.push('');
+      });
+      return lines.join('\n').trim();
+    }
+    function mapTextForReports(reports) {
+      return reports.map((h,i)=>`==============================\nSITE ${i + 1}: ${h.url}\n==============================\n${h.content || ''}`).join('\n\n').trim();
+    }
+    function composeReportText(reports, mode) {
+      if (!reports.length) return '';
+      if (mode === 'stats') return statsTextForReports(reports, reports.length === history.length ? 'RELATÓRIO ESTATÍSTICO GLOBAL' : 'RELATÓRIO ESTATÍSTICO SELECIONADO');
+      if (mode === 'map') return mapTextForReports(reports);
+      return `${statsTextForReports(reports, reports.length === history.length ? 'RELATÓRIO ESTATÍSTICO GLOBAL' : 'RELATÓRIO ESTATÍSTICO SELECIONADO')}\n\n\n${mapTextForReports(reports)}`;
+    }
+    function composeReportJson(reports, mode) {
+      const stats = {
+        jobs: reports.length,
+        total_items: reports.reduce((a,h)=>a+(h.items||0),0),
+        total_elapsed_ms: reports.reduce((a,h)=>a+(h.elapsed_ms||0),0),
+        total_sensitive: reports.reduce((a,h)=>a+(h.sensitive_count||0),0),
+        total_special_attention: reports.reduce((a,h)=>a+(h.special_count||0),0),
+        normal_items: Math.max(reports.reduce((a,h)=>a+(h.items||0),0) - reports.reduce((a,h)=>a+(h.sensitive_count||0),0) - reports.reduce((a,h)=>a+(h.special_count||0),0), 0),
+        special_attention_by_type: reports.reduce((a,h)=>{ const c = mergedSpecialCounts(h); a.files_or_extensions += (c.file||0)+(c.extension||0); a.dirs += c.dir||0; a.words += c.word||0; return a; }, {files_or_extensions:0, dirs:0, words:0}),
+        special_attention_terms: reports.reduce((a,h)=>addBreakdown(a, mergedSpecialBreakdown(h)), { file: {}, extension: {}, dir: {}, word: {} }),
+        truncated_reports: reports.filter(h=>h.truncated).length,
+      };
+      const mapped = reports.map(h => ({
+        url: h.url, created_at: h.created_at, items: h.items || 0, elapsed_ms: h.elapsed_ms || 0,
+        truncated: !!h.truncated, normal_items: Math.max((h.items||0) - (h.sensitive_count||0) - (h.special_count||0), 0), sensitive_count: h.sensitive_count || 0,
+        sensitive_hits: h.sensitive_hits || [], special_count: h.special_count || 0, special_counts: mergedSpecialCounts(h), special_breakdown: mergedSpecialBreakdown(h), special_hits: h.special_hits || [], ...(mode !== 'stats' ? { map: h.content || '' } : {})
+      }));
+      return JSON.stringify(mode === 'map' ? mapped.map(r => ({url:r.url, map:r.map})) : { stats, reports: mapped }, null, 2);
+    }
+    function refreshReportControls() {
+      const has = history.length > 0;
+      $('reportTools').style.display = has ? 'flex' : 'none';
+      $('exportOptions').style.display = has ? 'grid' : 'none';
+      $('reportChecklist').style.display = has && $('exportScope').value === 'selected' ? 'block' : 'none';
+      if (!has) return;
+      if (!currentReportId || !history.some(h => h.id === currentReportId)) currentReportId = history[0].id;
+      $('reportSelect').innerHTML = history.map((h,i)=>`<option value="${h.id}" ${h.id===currentReportId?'selected':''}>${escapeHtml(reportTitle(h,i))}</option>`).join('');
+      $('reportChecklist').innerHTML = history.map((h,i)=>`<label class="check-row"><input class="report-check" type="checkbox" value="${h.id}" ${h.id===currentReportId?'checked':''}><span>${escapeHtml(reportTitle(h,i))}</span></label>`).join('');
+    }
+    function showReportById(id) {
+      const h = history.find(x => x.id === id);
+      if (!h) return;
+      currentReportId = h.id;
+      $('urlInput').value = h.url;
+      const mode = $('displayMode').value;
+      $('output').value = composeReportText([h], mode);
+      setStats(h.items || 0, h.elapsed_ms || 0, !!h.truncated, h.sensitive_count || 0, h.special_count || 0, mergedSpecialCounts(h), mergedSpecialBreakdown(h));
+      sensitiveHits = h.sensitive_hits || [];
+      renderSensitive();
+      refreshReportControls();
+    }
+
+    function showToast(msg, isError = false) {
+      const t = $('toast');
+      t.textContent = msg;
+      t.classList.toggle('error', isError);
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2800);
+    }
+
+    function setupToggle(toggleId, inputId) {
+      const t = $(toggleId);
+      const i = inputId ? $(inputId) : null;
+      t.addEventListener('click', () => {
+        t.classList.toggle('active');
+        if (i) i.classList.toggle('show');
+        if (currentReportId) showReportById(currentReportId);
+      });
+    }
+    setupToggle('toggleExtensions', 'extensionsInput');
+    setupToggle('toggleHideFiles', null);
+    setupToggle('toggleRecursion', 'recursionInput');
+    setupToggle('toggleSensitive', null);
+    setupToggle('toggleSpecialFiles', 'specialFilesInput');
+    setupToggle('toggleSpecialDirs', 'specialDirsInput');
+    setupToggle('toggleSpecialWords', 'specialWordsInput');
+
+    $('searchPreset').addEventListener('change', updatePresetPreview);
+    $('applyPresetBtn').addEventListener('click', applyPreset);
+    $('clearAttentionBtn').addEventListener('click', clearAttentionFields);
+    updatePresetPreview();
+
+    function isMultiMode() { return $('toggleMultiSites').classList.contains('active'); }
+
+    $('toggleMultiSites').addEventListener('click', () => {
+      $('toggleMultiSites').classList.toggle('active');
+      const multi = isMultiMode();
+      $('multiSitesLabel').textContent = multi ? 'VÁRIOS SITES' : 'UM SITE';
+      $('singleUrlRow').style.display = 'flex';
+      $('singleUrlCol').style.display = multi ? 'none' : 'block';
+      $('qsCol').style.display = multi ? 'none' : 'block';
+      $('multiSitesWrap').classList.toggle('show', multi);
+      $('mapBtn').textContent = multi ? 'MAPEAR DIRS' : 'MAPEAR DIR';
+      $('output').placeholder = multi ? 'O resultado consolidado aparecerá aqui...' : 'O mapa aparecerá aqui...';
+    });
+
+    function parseMultiUrls() {
+      return $('multiSitesInput').value
+        .split(/\r?\n/)
+        .map(s => s.trim())
+        .filter(s => s && !s.startsWith('#'));
+    }
+
+    function parseAttentionList(id) {
+      return $(id).value.split(/[\n,]+/).map(s => s.trim()).filter(Boolean).join(',');
+    }
+
+    function buildOptions(urlOverride) {
+      return {
+        url: (urlOverride || $('urlInput').value).trim(),
+        hidden_extensions: $('toggleExtensions').classList.contains('active') ? $('hiddenExtensions').value : '',
+        hide_files: $('toggleHideFiles').classList.contains('active'),
+        max_depth: $('toggleRecursion').classList.contains('active') ? parseInt($('maxDepth').value, 10) || 3 : null,
+        max_items: parseInt($('maxItems').value, 10) || 100000,
+        format_type: $('formatType').value,
+        detect_sensitive: $('toggleSensitive').classList.contains('active'),
+        query_string: $('qsInput').value.trim(),
+        special_files: $('toggleSpecialFiles').classList.contains('active') ? parseAttentionList('specialFiles') : '',
+        special_dirs: $('toggleSpecialDirs').classList.contains('active') ? parseAttentionList('specialDirs') : '',
+        special_words: $('toggleSpecialWords').classList.contains('active') ? parseAttentionList('specialWords') : '',
+      };
+    }
+
+    async function mapUrl(urlOverride) {
+      if (mapping) return null;
+      const opts = buildOptions(urlOverride);
+      if (!opts.url) { showToast('Informe uma URL', true); return null; }
+      mapping = true;
+      $('cancelWrap').style.display = 'inline-block';
+      $('output').value = 'Varrendo... (clique em CANCELAR para abortar)';
+      $('stats').style.display = 'none';
+      try {
+        const res = await ipcRenderer.invoke('map-web', opts);
+        if (res.error && !res.content) {
+          $('output').value = 'Erro: ' + res.error;
+          showToast(res.error, true);
+          return res;
+        }
+        $('output').value = res.content || '';
+        setStats(res.items, res.elapsed_ms, res.truncated, res.sensitive_count || 0, res.special_count || 0, res.special_counts || specialCountsFromHits(res.special_hits), res.special_breakdown || specialBreakdownFromHits(res.special_hits));
+        sensitiveHits = res.sensitive_hits || [];
+        renderSensitive();
+        const reportId = uuid();
+        history.unshift({
+          id: reportId, url: opts.url, content: res.content, items: res.items,
+          elapsed_ms: res.elapsed_ms, truncated: res.truncated, sensitive_count: res.sensitive_count,
+          sensitive_hits: res.sensitive_hits || [], special_count: res.special_count || 0, special_counts: res.special_counts || specialCountsFromHits(res.special_hits || []), special_breakdown: res.special_breakdown || specialBreakdownFromHits(res.special_hits || []), special_hits: res.special_hits || [], format_type: opts.format_type, created_at: new Date().toISOString(),
+        });
+        queue.unshift({ id: uuid(), url: opts.url, opts, status: 'done', items: res.items || 0, sensitive_count: res.sensitive_count || 0, special_count: res.special_count || 0, truncated: !!res.truncated, reportId, created_at: new Date().toISOString() });
+        currentReportId = history[0].id;
+        saveHistory(); saveQueue();
+        renderHistory();
+        renderQueue();
+        refreshReportControls();
+        showToast(res.truncated ? 'Mapa gerado (truncado)' : 'Mapa gerado!');
+        return res;
+      } catch (e) {
+        if (String(e.message).includes('CANCELADO')) {
+          $('output').value = 'Cancelado pelo usuário.';
+          showToast('Cancelado', true);
+        } else {
+          $('output').value = 'Erro: ' + e.message;
+          showToast('Erro ao varrer', true);
+        }
+        return null;
+      } finally {
+        mapping = false;
+        $('cancelWrap').style.display = 'none';
+      }
+    }
+
+    async function mapMultipleSites() {
+      if (mapping) return null;
+      const urls = [...new Set(parseMultiUrls())];
+      if (!urls.length) { showToast('Cole pelo menos uma URL no modo vários sites', true); return null; }
+      mapping = true;
+      $('cancelWrap').style.display = 'inline-block';
+      $('stats').style.display = 'none';
+      $('output').value = `Varrendo ${urls.length} site(s)...\n`;
+
+      const chunks = [];
+      let totalItems = 0;
+      let totalMs = 0;
+      let truncated = false;
+      let totalSensitive = 0;
+      let totalSpecial = 0;
+      let totalSpecialCounts = { file: 0, extension: 0, dir: 0, word: 0 };
+      let totalSpecialBreakdown = { file: {}, extension: {}, dir: {}, word: {} };
+      sensitiveHits = [];
+
+      try {
+        for (let i = 0; i < urls.length; i++) {
+          const url = urls[i];
+          $('output').value = `${chunks.join('\n\n')}\n\n[${i + 1}/${urls.length}] Varrendo: ${url}`.trim();
+          const opts = buildOptions(url);
+          const res = await ipcRenderer.invoke('map-web', opts);
+          totalItems += res.items || 0;
+          totalMs += res.elapsed_ms || 0;
+          truncated = truncated || !!res.truncated;
+          totalSensitive += res.sensitive_count || 0;
+          totalSpecial += res.special_count || 0;
+          const sc = res.special_counts || specialCountsFromHits(res.special_hits || []);
+          totalSpecialCounts.file += sc.file || 0;
+          totalSpecialCounts.extension += sc.extension || 0;
+          totalSpecialCounts.dir += sc.dir || 0;
+          totalSpecialCounts.word += sc.word || 0;
+          addBreakdown(totalSpecialBreakdown, res.special_breakdown || specialBreakdownFromHits(res.special_hits || []));
+          sensitiveHits = sensitiveHits.concat(res.sensitive_hits || []);
+
+          const title = `==============================\nSITE ${i + 1}: ${url}\n==============================`;
+          chunks.push(`${title}\n${res.content || ('Erro: ' + (res.error || 'sem resposta'))}`);
+
+          const reportId = uuid();
+          history.unshift({
+            id: reportId, url, content: res.content, items: res.items || 0,
+            elapsed_ms: res.elapsed_ms || 0, truncated: !!res.truncated, sensitive_count: res.sensitive_count || 0,
+            sensitive_hits: res.sensitive_hits || [], special_count: res.special_count || 0, special_counts: res.special_counts || specialCountsFromHits(res.special_hits || []), special_breakdown: res.special_breakdown || specialBreakdownFromHits(res.special_hits || []), special_hits: res.special_hits || [], format_type: opts.format_type, created_at: new Date().toISOString(),
+          });
+          queue.unshift({ id: uuid(), url, opts, status: 'done', items: res.items || 0, sensitive_count: res.sensitive_count || 0, special_count: res.special_count || 0, truncated: !!res.truncated, reportId, created_at: new Date().toISOString() });
+          saveHistory(); saveQueue();
+        }
+
+        $('output').value = chunks.join('\n\n');
+        setStats(totalItems, totalMs, truncated, totalSensitive, totalSpecial, totalSpecialCounts, totalSpecialBreakdown);
+        renderSensitive();
+        currentReportId = history[0] ? history[0].id : null;
+        renderHistory();
+        renderQueue();
+        refreshReportControls();
+        showToast(truncated ? 'Lote gerado (com truncamento)' : 'Lote gerado!');
+        return { items: totalItems, elapsed_ms: totalMs, truncated, sensitive_count: totalSensitive, special_count: totalSpecial };
+      } catch (e) {
+        if (String(e.message).includes('CANCELADO')) {
+          $('output').value = (chunks.join('\n\n') + '\n\nCancelado pelo usuário.').trim();
+          showToast('Cancelado', true);
+        } else {
+          $('output').value = (chunks.join('\n\n') + `\n\nErro: ${e.message}`).trim();
+          showToast('Erro ao varrer lote', true);
+        }
+        return null;
+      } finally {
+        mapping = false;
+        $('cancelWrap').style.display = 'none';
+      }
+    }
+
+    $('mapBtn').addEventListener('click', () => isMultiMode() ? mapMultipleSites() : mapUrl());
+    $('cancelBtn').addEventListener('click', async () => { await ipcRenderer.invoke('cancel-mapping'); });
+
+    async function exportFile(ext) {
+      let content = '';
+      if (history.length) {
+        const reports = reportsByScope($('exportScope').value);
+        if (!reports.length) { showToast('Nenhum relatório selecionado', true); return; }
+        content = ext === 'json' ? composeReportJson(reports, $('exportContent').value) : composeReportText(reports, $('exportContent').value);
+      } else {
+        content = $('output').value;
+      }
+      if (!content) { showToast('Nada para exportar', true); return; }
+      const r = await ipcRenderer.invoke('save-file', { content, extension: ext });
+      if (r.success) showToast(`Salvo como .${ext}`);
+      else if (!r.canceled) showToast('Erro ao salvar', true);
+    }
+    $('exportMd').addEventListener('click', () => exportFile('md'));
+    $('exportJson').addEventListener('click', () => exportFile('json'));
+    $('exportTxt').addEventListener('click', () => exportFile('txt'));
+    $('copyBtn').addEventListener('click', () => {
+      let c = $('output').value;
+      if (history.length) {
+        const reports = reportsByScope($('exportScope').value);
+        c = composeReportText(reports, $('exportContent').value) || c;
+      }
+      if (!c) { showToast('Nada para copiar', true); return; }
+      navigator.clipboard.writeText(c).then(() => showToast('Copiado!'), () => showToast('Erro ao copiar', true));
+    });
+    $('openReportBtn').addEventListener('click', () => showReportById($('reportSelect').value));
+    $('reportSelect').addEventListener('change', () => showReportById($('reportSelect').value));
+    $('displayMode').addEventListener('change', () => currentReportId && showReportById(currentReportId));
+    $('exportScope').addEventListener('change', refreshReportControls);
+
+    // ===== Tabs =====
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const which = tab.dataset.tab;
+        $('panelQueue').style.display = which === 'queue' ? 'block' : 'none';
+        $('panelHistory').style.display = which === 'history' ? 'block' : 'none';
+        $('panelSensitive').style.display = which === 'sensitive' ? 'block' : 'none';
+      $('panelArchive').style.display = which === 'archive' ? 'block' : 'none';
+      });
+    });
+
+    // ===== Queue =====
+    function queueStats() {
+      return queue.reduce((a, q) => {
+        a.total += 1;
+        a[q.status] = (a[q.status] || 0) + 1;
+        a.items += q.items || 0;
+        a.sensitive += q.sensitive_count || 0;
+        a.special += q.special_count || 0;
+        return a;
+      }, { total: 0, pending: 0, running: 0, done: 0, error: 0, items: 0, sensitive: 0, special: 0 });
+    }
+
+    function renderQueueSummary() {
+      const s = queueStats();
+      $('queuePendingCount').textContent = s.pending + s.running;
+      if ($('archiveCount')) $('archiveCount').textContent = archive.length;
+      $('queueSummary').innerHTML = `
+        <div class="scan-card"><div class="num">${s.total}</div><div class="txt">jobs na central</div></div>
+        <div class="scan-card success"><div class="num">${s.done}</div><div class="txt">concluídos</div></div>
+        <div class="scan-card danger"><div class="num">${s.sensitive}</div><div class="txt">sensíveis</div></div>
+        <div class="scan-card warn"><div class="num">${s.special}</div><div class="txt">atenção especial</div></div>`;
+    }
+
+    function filteredQueue() {
+      let rows = queue.slice();
+      if (queueFilter === 'pending') rows = rows.filter(q => q.status === 'pending' || q.status === 'running');
+      if (queueFilter === 'done') rows = rows.filter(q => q.status === 'done');
+      if (queueFilter === 'error') rows = rows.filter(q => q.status === 'error');
+      if (queueFilter === 'sensitive') rows = rows.filter(q => (q.sensitive_count || 0) > 0);
+      if (queueFilter === 'special') rows = rows.filter(q => (q.special_count || 0) > 0);
+      if (queueFilter === 'empty') rows = rows.filter(q => q.status === 'done' && !(q.items || 0));
+      if (queueFilter === 'largest') rows.sort((a,b) => (b.items || 0) - (a.items || 0));
+      return rows;
+    }
+
+    function renderQueue() {
+      const wrap = $('queueList');
+      renderQueueSummary();
+      wrap.innerHTML = '';
+      const rows = filteredQueue();
+      if (!queue.length) {
+        wrap.innerHTML = '<div class="empty">Central vazia. Adicione URLs ou rode um lote.</div>';
+        return;
+      }
+      if (!rows.length) {
+        wrap.innerHTML = '<div class="empty">Nada nesse filtro. O silêncio também informa.</div>';
+        return;
+      }
+      wrap.innerHTML = `
+        <table class="job-table">
+          <thead>
+            <tr>
+              <th></th><th>Status</th><th>Dir / site</th><th>Lote</th><th>Itens</th><th>Sensíveis</th><th>Atenção</th><th style="text-align:right;">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(q => `
+              <tr>
+                <td><input class="job-check" type="checkbox" value="${q.id}" title="Selecionar job"></td>
+                <td><span class="status-badge ${q.status}">${String(q.status || 'pending').toUpperCase()}</span></td>
+                <td><div class="job-url" title="${escapeHtml(q.url)}">${escapeHtml(shortUrl(q.url))}</div>${q.error ? `<div class="hint danger">${escapeHtml(q.error)}</div>` : ''}</td>
+                <td><div class="job-batch" title="${escapeHtml(q.batchName || 'Avulso')}">${escapeHtml(q.batchName || 'Avulso')}</div></td>
+                <td>${q.items || 0}${q.truncated ? ' <span class="warn">TRUNC.</span>' : ''}</td>
+                <td><span class="${(q.sensitive_count || 0) ? 'danger' : 'success'}">${q.sensitive_count || 0}</span></td>
+                <td><span class="${(q.special_count || 0) ? 'warn' : 'success'}">${q.special_count || 0}</span></td>
+                <td><div class="job-actions">
+                  ${q.reportId ? `<button class="btn-secondary btn-small" data-openq="${q.reportId}">ABRIR</button>` : ''}
+                  ${q.status === 'pending' || q.status === 'error' ? `<button class="btn-primary btn-small" data-run="${q.id}">RODAR</button>` : ''}
+                  ${q.batchId ? `<button class="btn-secondary btn-small" data-archbatch="${q.batchId}">ARQ LOTE</button>` : ''}
+                  <button class="btn-secondary btn-small" data-archive="${q.id}">ARQ</button>
+                  <button class="btn-danger btn-small" data-delete="${q.id}">X</button>
+                </div></td>
+              </tr>`).join('')}
+          </tbody>
+        </table>`;
+      wrap.querySelectorAll('[data-run]').forEach(b => b.addEventListener('click', () => runQueueItem(b.dataset.run)));
+      wrap.querySelectorAll('[data-archive]').forEach(b => b.addEventListener('click', () => archiveQueueItems([b.dataset.archive])));
+      wrap.querySelectorAll('[data-archbatch]').forEach(b => b.addEventListener('click', () => archiveQueueBatch(b.dataset.archbatch)));
+      wrap.querySelectorAll('[data-delete]').forEach(b => b.addEventListener('click', () => deleteQueueItems([b.dataset.delete])));
+      wrap.querySelectorAll('[data-openq]').forEach(b => b.addEventListener('click', () => showReportById(b.dataset.openq)));
+      renderArchive();
+    }
+
+    function addToQueue(url, opts, batchId = '', batchName = '') {
+      queue.push({ id: uuid(), url, opts: opts || buildOptions(url), batchId, batchName, status: 'pending', items: 0, sensitive_count: 0, special_count: 0, truncated: false, created_at: new Date().toISOString() });
+      saveQueue(); renderQueue();
+    }
+    function selectedQueueIds() { return Array.from(document.querySelectorAll('.job-check:checked')).map(x => x.value); }
+    function removeOrphanReports(reportIds) {
+      const ids = new Set((reportIds || []).filter(Boolean));
+      if (!ids.size) return;
+      const stillUsed = new Set([...queue, ...archive].map(x => x.reportId).filter(Boolean));
+      history = history.filter(h => !ids.has(h.id) || stillUsed.has(h.id));
+      saveHistory(); renderHistory(); renderSensitive(); refreshReportControls();
+    }
+    function archiveQueueItems(ids) {
+      ids = Array.from(new Set(ids || []));
+      if (!ids.length) { showToast('Selecione ao menos um job', true); return; }
+      const moving = queue.filter(q => ids.includes(q.id));
+      if (!moving.length) return;
+      const now = new Date().toISOString();
+      archive.unshift(...moving.map(q => ({ ...q, archived_at: now })));
+      queue = queue.filter(q => !ids.includes(q.id));
+      saveQueue(); saveArchive(); renderQueue(); renderArchive(); showToast(`${moving.length} job(s) movidos para o arquivo morto`);
+    }
+    function archiveQueueBatch(batchId) {
+      const ids = queue.filter(q => q.batchId === batchId).map(q => q.id);
+      archiveQueueItems(ids);
+    }
+    function archiveSelectedBatches() {
+      const ids = selectedQueueIds();
+      const batches = new Set(queue.filter(q => ids.includes(q.id) && q.batchId).map(q => q.batchId));
+      if (!batches.size) { showToast('Selecione pelo menos um job de lote', true); return; }
+      archiveQueueItems(queue.filter(q => batches.has(q.batchId)).map(q => q.id));
+    }
+    function deleteQueueItems(ids) {
+      ids = Array.from(new Set(ids || []));
+      if (!ids.length) { showToast('Selecione ao menos um job', true); return; }
+      if (!confirm(`Apagar para sempre ${ids.length} job(s)? Isso remove da central e do histórico vinculado quando não houver cópia no arquivo morto.`)) return;
+      const doomedReports = queue.filter(q => ids.includes(q.id)).map(q => q.reportId).filter(Boolean);
+      queue = queue.filter(q => !ids.includes(q.id));
+      saveQueue(); removeOrphanReports(doomedReports); renderQueue(); showToast(`${ids.length} job(s) apagado(s)`);
+    }
+
+    $('addCurrentBtn').addEventListener('click', () => {
+      const u = $('urlInput').value.trim();
+      if (!u) { showToast('Informe uma URL', true); return; }
+      addToQueue(u, buildOptions());
+      showToast('Adicionado à fila');
+    });
+
+    $('addBulkBtn').addEventListener('click', () => {
+      const urls = $('bulkUrls').value.split(/\r?\n|,/).map(s => s.trim()).filter(Boolean);
+      if (!urls.length) { showToast('Cole URLs (uma por linha)', true); return; }
+      const baseOpts = buildOptions();
+      const batchId = uuid();
+      const batchName = `Lote ${new Date().toLocaleString()} · ${urls.length} URL(s)`;
+      urls.forEach(u => addToQueue(u, { ...baseOpts, url: u }, batchId, batchName));
+      $('bulkUrls').value = '';
+      showToast(`${urls.length} URL(s) na fila`);
+    });
+
+    async function runQueueItem(id) {
+      const item = queue.find(q => q.id === id);
+      if (!item) return;
+      item.status = 'running'; saveQueue(); renderQueue();
+      try {
+        const res = await ipcRenderer.invoke('map-web', item.opts);
+        if (res.error && !res.content) {
+          item.status = 'error'; item.error = res.error;
+        } else {
+          const reportId = uuid();
+          item.status = 'done'; item.items = res.items || 0; item.truncated = !!res.truncated; item.sensitive_count = res.sensitive_count || 0; item.special_count = res.special_count || 0; item.reportId = reportId; item.error = '';
+          history.unshift({
+            id: reportId, url: item.url, content: res.content, items: res.items,
+            elapsed_ms: res.elapsed_ms, truncated: res.truncated, sensitive_count: res.sensitive_count,
+            sensitive_hits: res.sensitive_hits || [], special_count: res.special_count || 0, special_counts: res.special_counts || specialCountsFromHits(res.special_hits || []), special_breakdown: res.special_breakdown || specialBreakdownFromHits(res.special_hits || []), special_hits: res.special_hits || [], format_type: item.opts.format_type, created_at: new Date().toISOString(),
+          });
+          currentReportId = history[0].id;
+          saveHistory(); renderHistory(); refreshReportControls();
+        }
+      } catch (e) {
+        item.status = 'error'; item.error = e.message;
+      }
+      saveQueue(); renderQueue();
+    }
+
+    $('runAllBtn').addEventListener('click', async () => {
+      const pending = queue.filter(q => q.status === 'pending');
+      if (!pending.length) { showToast('Nada na fila para rodar', true); return; }
+      showToast(`Rodando ${pending.length} item(ns)...`);
+      for (const item of pending) await runQueueItem(item.id);
+      showToast('Fila concluída');
+    });
+
+    $('clearQueueBtn').addEventListener('click', () => {
+      if (!queue.length) { showToast('Central já está limpa', true); return; }
+      if (!confirm(`Mover ${queue.length} job(s) para o arquivo morto?`)) return;
+      archiveQueueItems(queue.map(q => q.id));
+    });
+    $('clearDoneBtn').addEventListener('click', () => {
+      const ids = queue.filter(q => q.status === 'done').map(q => q.id);
+      if (!ids.length) { showToast('Nenhum concluído para arquivar', true); return; }
+      archiveQueueItems(ids);
+    });
+    $('rerunErrorsBtn').addEventListener('click', async () => {
+      const errors = queue.filter(q => q.status === 'error');
+      if (!errors.length) { showToast('Nenhum erro para reexecutar', true); return; }
+      errors.forEach(q => { q.status = 'pending'; q.error = ''; });
+      saveQueue(); renderQueue();
+      for (const item of errors) await runQueueItem(item.id);
+      showToast('Erros reexecutados');
+    });
+    $('archiveSelectedBtn').addEventListener('click', () => archiveQueueItems(selectedQueueIds()));
+    $('archiveSelectedBatchesBtn').addEventListener('click', archiveSelectedBatches);
+    $('deleteSelectedBtn').addEventListener('click', () => deleteQueueItems(selectedQueueIds()));
+
+    $('queueFilters').querySelectorAll('[data-qfilter]').forEach(b => b.addEventListener('click', () => {
+      queueFilter = b.dataset.qfilter;
+      $('queueFilters').querySelectorAll('[data-qfilter]').forEach(x => x.classList.toggle('active', x === b));
+      renderQueue();
+    }));
+    $('markQueueForExportBtn').addEventListener('click', () => {
+      const ids = Array.from(document.querySelectorAll('.job-check:checked')).map(x => x.value);
+      const reportIds = queue.filter(q => ids.includes(q.id) && q.reportId).map(q => q.reportId);
+      if (!reportIds.length) { showToast('Selecione jobs concluídos', true); return; }
+      $('exportScope').value = 'selected';
+      refreshReportControls();
+      document.querySelectorAll('.report-check').forEach(c => { c.checked = reportIds.includes(c.value); });
+      showToast(`${reportIds.length} relatório(s) marcados para exportação`);
+    });
+
+
+    // ===== Dead archive =====
+    function renderArchive() {
+      const wrap = $('archiveList');
+      if (!wrap) return;
+      $('archiveCount').textContent = archive.length;
+      if (!archive.length) {
+        wrap.innerHTML = '<div class="empty">Arquivo morto vazio. Nenhum fantasma por aqui.</div>';
+        return;
+      }
+      wrap.innerHTML = `
+        <table class="job-table">
+          <thead>
+            <tr>
+              <th></th><th>Status</th><th>Dir / site</th><th>Lote</th><th>Itens</th><th>Sensíveis</th><th>Atenção</th><th style="text-align:right;">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${archive.map(q => `
+              <tr>
+                <td><input class="archive-check" type="checkbox" value="${q.id}" title="Selecionar arquivado"></td>
+                <td><span class="status-badge ${q.status}">${String(q.status || 'pending').toUpperCase()}</span></td>
+                <td><div class="job-url" title="${escapeHtml(q.url)}">${escapeHtml(shortUrl(q.url))}</div><div class="hint">Arquivado: ${q.archived_at ? new Date(q.archived_at).toLocaleString() : '-'}</div></td>
+                <td><div class="job-batch" title="${escapeHtml(q.batchName || 'Avulso')}">${escapeHtml(q.batchName || 'Avulso')}</div></td>
+                <td>${q.items || 0}${q.truncated ? ' <span class="warn">TRUNC.</span>' : ''}</td>
+                <td><span class="${(q.sensitive_count || 0) ? 'danger' : 'success'}">${q.sensitive_count || 0}</span></td>
+                <td><span class="${(q.special_count || 0) ? 'warn' : 'success'}">${q.special_count || 0}</span></td>
+                <td><div class="job-actions">
+                  ${q.reportId ? `<button class="btn-secondary btn-small" data-openarch="${q.reportId}">ABRIR</button>` : ''}
+                  ${q.batchId ? `<button class="btn-secondary btn-small" data-restbatch="${q.batchId}">REST. LOTE</button>` : ''}
+                  <button class="btn-secondary btn-small" data-restore="${q.id}">RESTAURAR</button>
+                  <button class="btn-danger btn-small" data-delarch="${q.id}">X</button>
+                </div></td>
+              </tr>`).join('')}
+          </tbody>
+        </table>`;
+      wrap.querySelectorAll('[data-openarch]').forEach(b => b.addEventListener('click', () => showReportById(b.dataset.openarch)));
+      wrap.querySelectorAll('[data-restore]').forEach(b => b.addEventListener('click', () => restoreArchiveItems([b.dataset.restore])));
+      wrap.querySelectorAll('[data-restbatch]').forEach(b => b.addEventListener('click', () => restoreArchiveBatch(b.dataset.restbatch)));
+      wrap.querySelectorAll('[data-delarch]').forEach(b => b.addEventListener('click', () => deleteArchiveItems([b.dataset.delarch])));
+    }
+    function selectedArchiveIds() { return Array.from(document.querySelectorAll('.archive-check:checked')).map(x => x.value); }
+    function restoreArchiveItems(ids) {
+      ids = Array.from(new Set(ids || []));
+      if (!ids.length) { showToast('Selecione ao menos um arquivado', true); return; }
+      const moving = archive.filter(q => ids.includes(q.id));
+      if (!moving.length) return;
+      queue.unshift(...moving.map(q => { const copy = { ...q }; delete copy.archived_at; return copy; }));
+      archive = archive.filter(q => !ids.includes(q.id));
+      saveQueue(); saveArchive(); renderQueue(); renderArchive(); showToast(`${moving.length} job(s) restaurado(s)`);
+    }
+    function restoreArchiveBatch(batchId) {
+      restoreArchiveItems(archive.filter(q => q.batchId === batchId).map(q => q.id));
+    }
+    function restoreSelectedArchiveBatches() {
+      const ids = selectedArchiveIds();
+      const batches = new Set(archive.filter(q => ids.includes(q.id) && q.batchId).map(q => q.batchId));
+      if (!batches.size) { showToast('Selecione pelo menos um job de lote arquivado', true); return; }
+      restoreArchiveItems(archive.filter(q => batches.has(q.batchId)).map(q => q.id));
+    }
+    function deleteArchiveItems(ids) {
+      ids = Array.from(new Set(ids || []));
+      if (!ids.length) { showToast('Selecione ao menos um arquivado', true); return; }
+      if (!confirm(`Apagar para sempre ${ids.length} item(ns) do arquivo morto? Aí é vala comum digital mesmo.`)) return;
+      const doomedReports = archive.filter(q => ids.includes(q.id)).map(q => q.reportId).filter(Boolean);
+      archive = archive.filter(q => !ids.includes(q.id));
+      saveArchive(); removeOrphanReports(doomedReports); renderQueue(); renderArchive(); showToast(`${ids.length} item(ns) apagado(s) para sempre`);
+    }
+    $('restoreArchiveSelectedBtn').addEventListener('click', () => restoreArchiveItems(selectedArchiveIds()));
+    $('restoreArchiveBatchesBtn').addEventListener('click', restoreSelectedArchiveBatches);
+    $('deleteArchiveSelectedBtn').addEventListener('click', () => deleteArchiveItems(selectedArchiveIds()));
+    $('emptyArchiveBtn').addEventListener('click', () => deleteArchiveItems(archive.map(q => q.id)));
+
+    // ===== History =====
+    function renderHistory() {
+      const list = $('historyList');
+      list.innerHTML = '';
+      $('historyCount').textContent = history.length;
+      refreshReportControls();
+      if (!history.length) { list.innerHTML = '<div class="empty">Nenhuma varredura ainda.</div>'; return; }
+      history.forEach(h => {
+        const item = document.createElement('div');
+        item.className = 'list-item';
+        item.innerHTML = `
+          <div class="list-main">
+            <div class="list-url">${h.url}</div>
+            <div class="list-meta">
+              <span>${new Date(h.created_at).toLocaleString()}</span>
+              <span class="success">${Math.max((h.items||0) - (h.sensitive_count||0) - (h.special_count||0), 0)} NORMAL</span>
+              <span>${h.items} itens</span>
+              <span>${h.elapsed_ms} ms</span>
+              ${h.truncated ? '<span class="warn">TRUNCADO</span>' : ''}
+              ${h.sensitive_count ? `<span class="danger">${h.sensitive_count} SENSÍVEL</span>` : ''}
+              ${h.special_count ? `<span class="warn">${h.special_count} ATENÇÃO${breakdownLabel({ ...groupedFileBreakdown(mergedSpecialBreakdown(h)), ...mergedSpecialBreakdown(h).dir, ...mergedSpecialBreakdown(h).word }, 3)}</span>` : ''}
+            </div>
+          </div>
+          <div class="list-actions">
+            <button class="btn-secondary btn-small" data-load="${h.id}">ABRIR</button>
+            <button class="btn-danger btn-small" data-delh="${h.id}">X</button>
+          </div>`;
+        list.appendChild(item);
+      });
+      list.querySelectorAll('[data-load]').forEach(b => b.addEventListener('click', () => {
+        const h = history.find(x => x.id === b.dataset.load);
+        if (!h) return;
+        showReportById(h.id);
+        showToast('Carregado do histórico');
+      }));
+      list.querySelectorAll('[data-delh]').forEach(b => b.addEventListener('click', () => {
+        history = history.filter(x => x.id !== b.dataset.delh);
+        if (currentReportId === b.dataset.delh) currentReportId = history[0] ? history[0].id : null;
+        saveHistory(); renderHistory(); refreshReportControls();
+      }));
+    }
+    $('clearHistoryBtn').addEventListener('click', () => { history = []; currentReportId = null; saveHistory(); renderHistory(); refreshReportControls(); showToast('Histórico limpo'); });
+
+    // ===== Sensitive =====
+    function renderSensitive() {
+      const list = $('sensitiveList');
+      list.innerHTML = '';
+      $('sensitiveCount').textContent = sensitiveHits.length;
+      if (!sensitiveHits.length) { list.innerHTML = '<div class="empty">Nenhum arquivo sensível na varredura atual.</div>'; return; }
+      sensitiveHits.forEach(s => {
+        const item = document.createElement('div');
+        item.className = 'list-item sensitive';
+        item.innerHTML = `<div class="list-main"><div class="list-url danger">${s.name}</div><div class="list-meta"><a href="${s.url}" target="_blank">${s.url}</a></div></div>`;
+        list.appendChild(item);
+      });
+    }
+
+    renderQueue(); renderArchive(); renderHistory(); renderSensitive(); refreshReportControls();
+  </script>
+</body>
+</html>

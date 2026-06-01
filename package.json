@@ -1,0 +1,48 @@
+{
+  "name": "web-dir-map",
+  "version": "1.0.0",
+  "description": "Mapeador recursivo de diretorios web (Apache/Nginx Index of) - DIR MAP Web Edition",
+  "main": "main.js",
+  "author": "Emergent",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "build-python": "pyinstaller --onefile --name web_dir_mapper --distpath bin --workpath build --specpath build web_dir_mapper.py",
+    "build-win": "electron-builder --win --x64",
+    "build-win-portable": "electron-builder --win portable --x64",
+    "build-all-win": "npm run build-python && npm run build-win"
+  },
+  "devDependencies": {
+    "electron": "28.3.3",
+    "electron-builder": "24.13.3"
+  },
+  "build": {
+    "appId": "com.emergent.webdirmap",
+    "productName": "WEB DIR MAP",
+    "files": [
+      "main.js",
+      "index.html",
+      "package.json"
+    ],
+    "extraResources": [
+      { "from": "web_dir_mapper.py", "to": "web_dir_mapper.py" },
+      { "from": "bin", "to": "bin", "filter": ["**/*"] }
+    ],
+    "win": {
+      "target": [
+        { "target": "nsis", "arch": ["x64"] },
+        { "target": "portable", "arch": ["x64"] }
+      ],
+      "artifactName": "WEB-DIR-MAP-${version}-${arch}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "shortcutName": "WEB DIR MAP"
+    },
+    "directories": {
+      "output": "dist"
+    }
+  }
+}
